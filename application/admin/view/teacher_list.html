@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="keyword" content="">
+
+<title>教师表</title>
+	<link rel="stylesheet" type="text/css" href="public/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="public/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="public/css/base.css"/>
+    <link rel="stylesheet" type="text/css" href="public/css/admin.css"/>
+    <link rel="stylesheet" type="text/css" href="public/css/com.css">
+    
+    
+    <script src="public/js/jquery.js"></script>
+    <!--<script src="public/js/jquery-1.11.1.min.js"></script>-->
+    <script src="public/js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+		  $(".click").click(function(){
+		  	$(".tip").fadeIn(200);
+		  });
+
+		  $(".sure").click(function(){
+			  $(".tip").fadeOut(100);
+			});
+
+		  $(".cancel").click(function(){
+			  $(".tip").fadeOut(100);
+			});
+		  $(".tiptop a").click(function(){
+			  $(".tip").fadeOut(100);
+		   });	
+			$("#checkAll").click(function(){
+		
+				if(this.checked){
+					$(".checkbox_Id").prop("checked",true);
+				}else{
+					$(".checkbox_Id").prop("checked",false);
+				}
+
+			});	
+			$("#sub").click(function(){
+				var params=$("#search_form").serialize();
+				$.ajax({
+					type:"POST",
+					url:"index.php?a=search&c=teacher",
+					data: params,
+					success: function(d){
+						$("#wrapper").html(d);
+					}
+				})
+			})
+			$(".sure").click(function(){
+				var params=$("#deleteRows_form").serialize();
+				$.ajax({
+					type:"POST",
+					url:"index.php?a=deleteRows&c=teacher",
+					data: params,
+					success: function(d){
+						$("#wrapper").html(d);
+					}
+				})
+			})
+		}); 
+	</script>
+</head>
+
+<body>
+<div class="place">
+    <span>位置：</span>
+    <ul class="placeul">
+      <li><a href="index.php">首页</a></li>
+      <li>></li>
+      <li><a href="#">教师管理</a></li>
+    </ul>
+</div>
+
+<div class="formbody">
+    <div id="usual1" class="usual"> 
+       <div class="itab">
+        	<ul> 
+        		<li><a href="javascript:;" onclick="showAtRight('index.php?a=add&c=teacher')">添加教师</a></li> 
+        		<li><a href="#tab2" class="selected">教师管理</a></li> 
+       	    </ul>
+       </div> 
+       <div id="tab2" class="tabson">
+        <form class="form-inline" role="form" id="search_form" method="post">
+  			<div class="form-group">
+    			<label class="control-label">性别:</label>
+        		<select class="form-control" name="teacherSex">
+        			<option value="">全部</option>
+        			<option value="男">男</option>
+        			<option value="女">女</option>
+        		</select>
+ 	 		</div>
+  			 <div class="form-group">
+                <label for="teacherRealname" class="control-label">真实姓名: </label>
+                <input type="text" name="teacherRealname" id="teacherRealname" class="form-control" placeholder="请输入真实姓名">
+  			</div>
+            <div class="form-group">
+                <button type="button" id="sub" class="btn btn-default">查询</button>
+            </div>
+		</form>
+        <form method="post" id="deleteRows_form">
+        <div class="table-responsive">
+			<table class="table table-bordered table-striped table-hover tablelist">
+            	<tr> 
+					<th><input name="" type="checkbox" id="checkAll" checked=""/></th>
+					<th>姓名</th>
+					<th>性别</th>
+					<th>电子邮箱</th>
+					<th>联系电话</th>
+					<th class="listyin">添加时间</th>
+					<th>操作</th>
+				 </tr>
+                <? foreach($data as $v){ ?>
+                <tr>
+                   <td><input name="teacherNumber[]" type="checkbox" value="<? echo $v['teacherNumber']?>"  class="checkbox_Id"/></td>
+                   <td><? echo $v['teacherRealname']?></td>
+                   <td><? echo $v['teacherSex']?></td>
+                   <td><? echo $v['teacherEmail']?></td>
+                   <td><? echo $v['teacherPhoneNumber']?></td>
+                   <td  class="listyin"><? echo $v['teacherAddtime']?></td>
+                   <td>
+                      <a href="javascript:;" onclick="showAtRight('?a=update&c=teacher&p=<? echo $v['teacherNumber']?>')" class="tablelink"> 查看/修改</a> 
+                      <a href="javascript:;" onclick="showAtRight('?a=delete&c=teacher&p=<? echo $v['teacherNumber']?>')" class="tablelink"> 删除</a>
+                   </td>
+                </tr>
+               <? } ?>
+                <tr>
+                	<td colspan="8"><a href="javascript:;" class="tablelink click">删除全部</a></td>
+                </tr> 
+			</table>
+		</div>
+        <ul class="pagination">
+            <?=$page_cls -> myde_write($word)?>
+		</ul>
+        <div class="tip">
+            <div class="tiptop"><span>提示信息</span><a></a></div>
+          	<div class="tipinfo">
+            	<span><img src="public/img/ticon.png" /></span>
+            	<div class="tipright">
+            		<p>是否确认对信息的删除？</p>
+                    <cite>如果是请点击确定按钮 ，否则请点取消。</cite>
+            	</div>
+            </div>
+            <div class="tipbtn">
+            	<input name="" type="button"  class="sure" value="确定" />&nbsp;
+            	<input name="" type="button"  class="cancel" value="取消" />
+            </div>
+        </div> 
+        </form>
+        
+        </div>
+       
+	</div> 
+ 
+	<script type="text/javascript"> 
+      $("#usual1 ul").idTabs(); 
+    </script>
+    
+    <script type="text/javascript">
+	$('.tablelist tbody tr:odd').addClass('odd');
+	</script>
+</div>
+</div>
+</body>
+</html>

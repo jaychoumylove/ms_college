@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="keyword" content="">
+
+<title>修改成绩</title>
+	<link rel="stylesheet" type="text/css" href="public/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="public/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="public/css/base.css"/>
+    <link rel="stylesheet" type="text/css" href="public/css/admin.css"/>
+    <link rel="stylesheet" type="text/css" href="public/css/com.css">
+    
+    
+    <script src="public/js/jquery.js"></script>
+    <!--<script src="../../public/js/jquery-1.11.1.min.js"></script>-->
+    <script src="public/js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+		$(".dui").hide();
+		$(".cuo").hide();
+		$("#sub").click(function(){
+			var params=$("#update_form").serialize();
+			$.ajax({
+				type : "POST" ,
+				url : "index.php?a=update&c=grade&act=action",
+				data : params,
+				success : function(d){
+					var s=d.substr(d,(d.length-1));
+					if(d){
+						$(".dui").show(720);
+						qk();
+					}else{
+						$(".cuo").show(720);
+					}
+				}
+			})
+		})
+	</script>
+    
+</head>
+
+<body>
+<div class="formbody">
+<div class="place">
+    <span>位置：</span>
+    <ul class="placeul">
+    <li><a href="index.php">首页</a></li>
+    <li>></li>
+    <li><a href="#">修改成绩</a></li>
+    </ul>
+</div>
+    <div id="usual1" class="usual"> 
+    
+        <div class="itab">
+        	<ul> 
+            	<? if(@$_GET['active']!='class'){ ?>
+        		<li><a href="javascript:;" onclick="showAtRight('?a=add&c=grade')">添加成绩</a></li> 
+        		<li><a href="javascript:;" onclick="showAtRight('?a=search&c=grade')">成绩管理</a></li> 
+                <? }else{ ?>
+                <li><a href="javascript:;">修改成绩</a></li> 
+                <? } ?>
+       	    </ul>
+        </div> 
+    
+       <div id="tab1" class="tabson">
+           <form class="form-horizontal" role="form" method="post" id="update_form">
+           	  <div class="form-group">
+    			<label class="control-label col-sm-3">系:</label>
+                <div class="vasel col-sm-9">
+        			<? echo $data['dmt_name']?>
+        		</div>
+ 	 	      </div>
+              <div class="form-group">
+    			<label class="control-label col-sm-3">专业名:</label>
+                <div class="vasel col-sm-9">
+        			<? echo $data['majorsName']?>
+        		</div>
+ 	 	      </div>
+              <div class="form-group">
+    			<label class="control-label col-sm-3">课程名:</label>
+                <div class="vasel col-sm-9">
+        			<? echo $data['classCoursesName']?>
+        		</div>
+ 	 	      </div>
+             <div class="form-group">
+    			<label class="control-label col-sm-3">学生姓名:</label>
+                <div class="vasel col-sm-9">
+        			<? echo $data['stu_realname']?>
+        		</div>
+ 	 	      </div>
+              <div class="form-group">
+    			<label for="grade" class="control-label col-sm-3">分数:</label>
+                <div class="vasel col-sm-9">
+        			<input type="text" class="form-control" id="grade" name="grade" placeholder="满分为100分！" value="<? echo $data['grade'];?>" >
+        		</div>
+ 	 	      </div>
+              <div class="form-group">
+                <div class="col-sm-10">
+                   <input type="hidden" value="<? echo $data['stu_num'];?>" name="stu_num" />
+                   <input type="hidden" value="<? echo $data['class_num'];?>" name="class_num" />
+                    <button type="button" id="sub" class="btn btn-default upbtn">确定</button>
+                </div>
+             </div>
+             <div class="form-group">
+				<div class="col-sm-12 prompt dui"><i class="fa fa-check-circle">成绩修改成功！</i></div>
+            	<div class="col-sm-12 prompt cuo"><i class="fa fa-times-circle">成绩修改失败！</i></div>
+			 </div>
+          </form>
+       </div>
+       
+	</div> 
+ 
+	<script type="text/javascript"> 
+      $("#usual1 ul").idTabs(); 
+    </script>
+    
+    <script type="text/javascript">
+	$('.tablelist tbody tr:odd').addClass('odd');
+	</script>
+</div>
+</body>
+</html>

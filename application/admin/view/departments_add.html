@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="keyword" content="">
+
+<title>添加系</title>
+	<link rel="stylesheet" type="text/css" href="public/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="public/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="public/css/base.css"/>
+    <link rel="stylesheet" type="text/css" href="public/css/admin.css"/>
+    <link rel="stylesheet" type="text/css" href="public/css/com.css">
+    
+    <script src="public/js/jquery.js"></script>
+    <!--<script src="public/js/jquery-1.11.1.min.js"></script>-->
+    <script src="public/js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$(".cuo").hide();
+			$(".dui").hide();
+			$("#sub").click(function(){
+				var params=$("#add_form").serialize();
+				$.ajax({
+					type : "POST" ,
+					url : "index.php?a=add&c=departments&act=action",
+					data : params,
+					success : function(d){
+						//var s=d.substr(d,(d.length-1));
+						if(d){
+							$(".cuo").hide();
+							$(".dui").show(720);
+							qk();
+						}else{
+							$(".dui").hide();
+							$(".cuo").show(720);
+							//$(".cuo").children("i").html(d)
+						}
+					}
+				})
+			})
+			function qk(){
+				$("#dmt_name").val("");
+				$("#dmt_director").val("");
+				$("#dmt_directorPhonenumber").val("");
+				$("#dmt_directorAddress").val("");
+			}
+		})
+	</script>
+</head>
+
+<body>
+<div class="place">
+    <span>位置：</span>
+    <ul class="placeul">
+    <li><a href="index.php">首页</a></li>
+    <li>></li>
+    <li><a href="#">添加系</a></li>
+    </ul>
+</div>
+
+<div class="formbody">
+    <div id="usual1" class="usual"> 
+    
+        <div class="itab">
+        	<ul> 
+        		<li><a href="javascript:;"  class="selected">添加系</a></li> 
+        		<li><a href="javascript:;" onclick="showAtRight('?a=search&c=departments')">系管理</a></li> 
+       	    </ul>
+        </div> 
+    
+       <div id="tab1" class="tabson">
+           <form class="form-horizontal" role="form" method="post" id="add_form">
+               <div class="form-group">
+                  <label for="dmt_name" class="col-sm-2 control-label">系名：</label>
+                  <div class="col-sm-10">
+                      <input type="text" class="form-control" id="dmt_name" name="dmt_name" placeholder="请输入系名">
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="dmt_director" class="col-sm-2 control-label">系领导名：</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="dmt_director" name="dmt_director" placeholder="请输入系领导名">
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="dmt_directorPhonenumber" class="col-sm-2 control-label">电话：</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="dmt_directorPhonenumber" name="dmt_directorPhonenumber" placeholder="请输入系电话">
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="dmt_directorAddress" class="col-sm-2 control-label" name="realname">地址：</label>
+                  <div class="col-sm-10">
+                     <input type="text" class="form-control" id="dmt_directorAddress" name="dmt_directorAddress" placeholder="请输入系地址">
+                  </div>
+              </div>
+              <div class="form-group">
+                  <div class="col-sm-offset-2 col-sm-10">
+                     <button type="button" id="sub" class="btn btn-default upbtn">添加</button>
+                     <input type="reset" class="btn btn-default upbtn" value="重置">
+                  </div>
+              </div>
+             <div class="form-group">
+				 <div class="col-sm-12 prompt dui"><i class="fa fa-check-circle">系添加成功！</i></div>
+            	 <div class="col-sm-12 prompt cuo"><i class="fa fa-times-circle">系添加失败！</i></div>
+			 </div>
+        </form>
+       </div>
+       
+	</div> 
+ 
+	<script type="text/javascript"> 
+      $("#usual1 ul").idTabs(); 
+    </script>
+    
+    <script type="text/javascript">
+	$('.tablelist tbody tr:odd').addClass('odd');
+	</script>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="keyword" content="">
+
+    <title>首页</title>
+    
+   <!-- <link rel="stylesheet" type="text/css" href="../../public/css/base.css">-->
+    <link rel="stylesheet" type="text/css" href="public/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="public/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="public/css/zabuto_calendar.css">
+    <link rel="stylesheet" type="text/css" href="public/css/left.css">
+    <link rel="stylesheet" type="text/css" href="public/css/com.css">
+    <link rel="stylesheet" type="text/css" href="public/css/lineicons/style.css">
+    <link rel="stylesheet" type="text/css" href="public/css/font-awesome.css">
+    
+    <script language="javascript" type="text/javascript">
+ 
+/*
+         * 解决ajax返回的页面中含有javascript的办法：
+         * 把xmlHttp.responseText中的脚本都抽取出来，不管AJAX加载的HTML包含多少个脚本块，我们对找出来的脚本块都调用eval方法执行它即可
+         */
+        function executeScript(html)
+        {
+            
+            var reg = /<script[^>]*>([^\x00]+)$/i;
+            //对整段HTML片段按<\/script>拆分
+            var htmlBlock = html.split("<\/script>");
+            for (var i in htmlBlock) 
+            {
+                var blocks;//匹配正则表达式的内容数组，blocks[1]就是真正的一段脚本内容，因为前面reg定义我们用了括号进行了捕获分组
+                if (blocks = htmlBlock[i].match(reg)) 
+                {
+                    //清除可能存在的注释标记，对于注释结尾-->可以忽略处理，eval一样能正常工作
+                    var code = blocks[1].replace(/<!--/, '');
+                    try 
+                    {
+                        eval(code) //执行脚本
+                    } 
+                    catch (e) 
+                    {
+                    }
+                }
+            }
+        }
+        
+        /*
+         * 利用div实现左边点击右边显示的效果（以id="content"的div进行内容展示）
+         * 注意：
+         *   ①：js获取网页的地址，是根据当前网页来相对获取的，不会识别根目录；
+         *   ②：如果右边加载的内容显示页里面有css，必须放在主页（即例中的index.jsp）才起作用
+         *   （如果单纯的两个页面之间include，子页面的css和js在子页面是可以执行的。 主页面也可以调用子页面的js。但这时要考虑页面中js和渲染的先后顺序 ）
+        */
+        function showAtRight(url){
+		
+            var xmlHttp;
+            
+            if (window.XMLHttpRequest) {
+                // code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlHttp=new XMLHttpRequest();    //创建 XMLHttpRequest对象
+            }
+            else {
+                // code for IE6, IE5
+                xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
+            }
+        
+            xmlHttp.onreadystatechange=function() {        
+                //onreadystatechange — 当readystate变化时调用后面的方法
+                
+                if (xmlHttp.readyState == 4) {
+                    //xmlHttp.readyState == 4    ——    finished downloading response
+                    
+                    if (xmlHttp.status == 200) {
+                        //xmlHttp.status == 200        ——    服务器反馈正常            
+                        
+                        document.getElementById("wrapper").innerHTML=xmlHttp.responseText;    //重设页面中id="content"的div里的内容
+                        executeScript(xmlHttp.responseText);    //执行从服务器返回的页面内容里包含的JavaScript函数
+                    }
+                    //错误状态处理
+                    else if (xmlHttp.status == 404){
+                        alert("出错了☹   （错误代码：404 Not Found），……！"); 
+                        /* 对404的处理 */
+                        return;
+                    }
+                    else if (xmlHttp.status == 403) {  
+                        alert("出错了☹   （错误代码：403 Forbidden），……"); 
+                        /* 对403的处理  */ 
+                        return;
+                    }
+                    else {
+                        alert("出错了☹   （错误代码：" + request.status + "），……"); 
+                        /* 对出现了其他错误代码所示错误的处理   */
+                        return;
+                    }   
+                } 
+                    
+              }
+            
+            //把请求发送到服务器上的指定文件（url指向的文件）进行处理
+            xmlHttp.open("GET", url, true);        //true表示异步处理
+            xmlHttp.send();
+        } 
+ 
+ </script>
+  </head>
+
+  <body>
+
+	  <section id="container" >
+		<header class="header black-bg">
+			  <div class="sidebar-toggle-box">
+				  <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
+			  </div>
+			<!--logo start-->
+			<a href="?c=index" class="logo">欢迎<? echo $_SESSION['name'];?>登录！</a>
+			<!--logo end-->
+			<div class="top-menu">
+				<ul class="nav pull-right top-menu">
+					<li><a class="logout" href="?c=quit&a=quit">退出</a></li>
+				</ul>
+			</div>
+		</header>
+		  <!--sidebar start-->
+		<aside>
+          <div id="sidebar"  class="nav-collapse ">
+              <!-- sidebar menu start-->
+              <ul class="sidebar-menu" id="nav-accordion">
+              	   <li class="mt">
+                    <p class="centered"><a href="?c=index"><img src="public/img/logo.png" class="img-circle" width="60"></a></p>
+                     <h5 class="centered">选课系统</h5>
+                  </li>
+                  <? if(chk_powerLV('45') || chk_powerLV('46') || chk_powerLV('69')){
+?>
+                  <li class="sub-menu">
+                      <a href="javascript:;" >
+                          <i class="fa fa-user"></i>
+                          <span>学生管理</span>
+                      </a>
+                      <ul class="sub">
+                         <? if(chk_powerLV('45')){ ?> 
+                          <li><a href="javascript:;" onclick="showAtRight('?a=search&c=student')">学生列表</a></li>
+                          <? }
+                          	if(chk_powerLV('46')){?>
+                          <li><a href="javascript:;" onclick="showAtRight('?a=add&c=student')">添加学生</a></li>
+                          <? } 
+                          if(chk_powerLV('69')){?>
+                          <li><a href="javascript:;" onclick="showAtRight('?a=person&c=student&p=<? echo $_SESSION['name'];?>')">个人信息</a></li>
+                          <? } ?>
+                      </ul>
+                  </li>
+				  <? } 
+                 if(chk_powerLV('41') || chk_powerLV('42') || chk_powerLV('71')){?>
+                  <li class="sub-menu">
+                      <a href="javascript:;" >
+                          <i class="fa fa-cogs"></i>
+                          <span>教师管理</span>
+                      </a>
+                      <ul class="sub">
+                         <? if(chk_powerLV('41')){ ?> 
+                          <li><a href="javascript:;" onclick="showAtRight('?a=search&c=teacher')">教师列表</a></li>
+                          <? }
+                          	if(chk_powerLV('42')){?>
+                          <li><a href="javascript:;" onclick="showAtRight('?a=add&c=teacher')">添加教师</a></li>
+                          <? }
+                          	if(chk_powerLV('71')){?>
+                          <li><a href="javascript:;" onclick="showAtRight('?a=person&c=teacher&p=<? echo $_SESSION['name'];?>')">个人信息</a></li>
+                          <? } ?>
+                      </ul>
+                  </li>
+                  <? } 
+                 if(chk_powerLV('29') || chk_powerLV('30')){?>
+                  <li class="sub-menu">
+                      <a href="javascript:;" >
+                          <i class="fa fa-database"></i>
+                          <span>系管理</span>
+                      </a>
+                      <ul class="sub">
+                         <? if(chk_powerLV('29')){ ?> 
+                          <li><a href="javascript:;" onclick="showAtRight('?a=search&c=departments')">系列表</a></li>
+                          <? }
+                          	if(chk_powerLV('30')){?>
+                          <li><a href="javascript:;" onclick="showAtRight('?a=add&c=departments')">添加系</a></li>
+                          <? } ?>
+                      </ul>
+                  </li>
+                  <? } 
+                 if(chk_powerLV('33') || chk_powerLV('34')){?>
+                  <li class="sub-menu">
+                      <a href="javascript:;" >
+                          <i class="fa fa-book"></i>
+                          <span>专业管理</span>
+                      </a>
+                      <ul class="sub">
+                         <? if(chk_powerLV('33')){ ?> 
+                          <li><a href="javascript:;" onclick="showAtRight('?a=search&c=majors')">专业列表</a></li>
+                          <? }
+                          	if(chk_powerLV('34')){ ?>
+                          <li><a href="javascript:;" onclick="showAtRight('?a=add&c=majors')">添加专业</a></li>
+                          <? } ?>
+                      </ul>
+                  </li>
+                  <? } 
+                 if(chk_powerLV('53') || chk_powerLV('54')){?>
+                  <li class="sub-menu">
+                      <a href="javascript:;" >
+                          <i class="fa fa-table"></i>
+                          <span>教室管理</span>
+                      </a>
+                      <ul class="sub">
+                         <? if(chk_powerLV('53')){ ?> 
+                          <li><a href="javascript:;" onclick="showAtRight('?a=search&c=classroom')">教室列表</a></li>
+                          <? }
+                          	if(chk_powerLV('54')){?>
+                          <li><a href="javascript:;" onclick="showAtRight('?a=add&c=classroom')">添加教室</a></li>
+                          <? } ?>
+                      </ul>
+                  </li>
+                  <? } 
+                 if(chk_powerLV('37') || chk_powerLV('72') || chk_powerLV('38') || chk_powerLV('78') || chk_powerLV('77')){?>
+                  <li class="sub-menu">
+                      <a href="javascript:;" >
+                          <i class="fa fa-calendar"></i>
+                          <span>课程管理</span>
+                      </a>
+                      <ul class="sub">
+                         <? if(chk_powerLV('37')){ ?> 
+                          <li><a href="javascript:;" onclick="showAtRight('?a=search&c=class')">课程列表</a></li>
+                          <? } if(chk_powerLV('72')){?>
+                          <li><a href="javascript:;" onclick="showAtRight('?a=searchForTN&c=class')">教授课程</a></li>
+                          <? } if(chk_powerLV('38')){?>
+                          <li><a href="javascript:;" onclick="showAtRight('?a=add&c=class')">添加课程</a></li>
+                          <? } if(chk_powerLV('77')){?>
+                          <li><a href="javascript:;" onclick="showAtRight('?a=adminadd&c=grade')">添加选课</a></li>
+                          <? } if(chk_powerLV('78')){?>
+                          <li><a href="javascript:;" onclick="showAtRight('?a=searchlistForSN&c=class')">课程列表</a></li>
+                          <? } ?>
+                      </ul>
+                  </li>
+                  <? } 
+                 if(chk_powerLV('49') || chk_powerLV('50') || chk_powerLV('70') || chk_powerLV('68')){?>
+                  <li class="sub-menu">
+                      <a href="javascript:;" >
+                          <i class="fa fa-file-text"></i>
+                          <span>成绩管理</span>
+                      </a>
+                      <ul class="sub">
+                         <? if(chk_powerLV('49')){ ?> 
+                          <li><a href="javascript:;" onclick="showAtRight('?a=search&c=grade')">成绩列表</a></li>
+                          <? }
+                          	if(chk_powerLV('50')){?>
+                          <li><a href="javascript:;" onclick="showAtRight('?a=add&c=grade')">添加成绩</a></li>
+                          <? }
+                          	if(chk_powerLV('70')){?>
+                          <li><a href="javascript:;" onclick="showAtRight('?a=search&c=grade&act=class')">班级成绩</a></li>
+                          <? }
+                          	if(chk_powerLV('68')){?>
+                          <li><a href="javascript:;" onclick="showAtRight('?a=search&c=grade&act=person')">个人成绩</a></li>
+                          <? } ?>
+                          <!--<li><a onclick="showAtRight('application/admin/view/grade_i.html')">导入导出成绩</a></li>-->
+                      </ul>
+                  </li>
+                  <? } 
+                 if(chk_powerLV('14') || chk_powerLV('17')){?>
+                  <li class="sub-menu">
+                      <a href="javascript:;" >
+                          <i class="fa fa-anchor"></i>
+                          <span>权限管理</span>
+                      </a>
+                      <ul class="sub">
+                         <? if(chk_powerLV('14')){ ?> 
+                          <li><a href="javascript:;" onclick="showAtRight('?a=search&c=power')">权限列表</a></li>
+                          <? }
+                          	if(chk_powerLV('17')){?>
+                          <li><a href="javascript:;" onclick="showAtRight('?a=add&c=power')">添加权限</a></li>
+                          <? } ?>
+                      </ul>
+                  </li>
+                  <? } 
+                  if(chk_powerLV('21') || chk_powerLV('22')){?>
+                  <li class="sub-menu">
+                      <a href="javascript:;" >
+                          <i class="fa fa-gear "></i>
+                          <span>角色管理</span>
+                      </a>
+                      <ul class="sub">
+                         <? if(chk_powerLV('21')){ ?> 
+                          <li><a href="javascript:;" onclick="showAtRight('?a=search&c=user')">角色列表</a></li>
+                          <? }
+                          	if(chk_powerLV('22')){?>
+                          <li><a href="javascript:;" onclick="showAtRight('?a=add&c=user')">添加角色</a></li>
+                          <? } ?>
+                      </ul>
+                  </li>
+                  <? } 
+                  if(chk_powerLV('25') || chk_powerLV('26')){?>
+                  <li class="sub-menu">
+                      <a href="javascript:;" >
+                          <i class="fa fa-user"></i>
+                          <span>管理员管理</span>
+                      </a>
+                      <ul class="sub">
+                         <? if(chk_powerLV('25')){ ?> 
+                          <li><a href="javascript:;" onclick="showAtRight('?a=search&c=admin')">管理员列表</a></li>
+                          <? }
+                          	if(chk_powerLV('26')){ ?>
+                          <li><a href="javascript:;" onclick="showAtRight('?a=add&c=admin')">添加管理员</a></li>
+                          <? } ?>
+                      </ul>
+                  </li>
+                  <? } ?>
+              </ul>
+              <!-- sidebar menu end-->
+          </div>
+      </aside>
+      <!--sidebar end-->
+       <!--main content start-->
+      <section id="main-content">
+          <section class="wrapper" id="wrapper">
+
+              <div class="row">
+                  <div class="col-lg-9 main-chart">
+                  
+                  	<div class="row mtbox">
+                  		<div class="col-md-2 col-sm-2 col-md-offset-1 box0">
+                  			<div class="box1">
+					  			<span class="li_user"></span>
+					  			<h3><? echo $allofstudent;?></h3>
+                  			</div>
+					  			<p>学生总人数</p>
+                  		</div>
+                  		<div class="col-md-2 col-sm-2 box0">
+                  			<div class="box1">
+					  			<span class="li_study"></span>
+					  			<h3><? echo $allofteacher;?></h3>
+                  			</div>
+					  			<p>老师总人数</p>
+                  		</div>
+                  		<div class="col-md-2 col-sm-2 box0">
+                  			<div class="box1">
+					  			<span class="li_note"></span>
+					  			<h3><? echo $allofmajors;?></h3>
+                  			</div>
+					  			<p>总专业数</p>
+                  		</div>
+                  		<div class="col-md-2 col-sm-2 box0">
+                  			<div class="box1">
+					  			<span class="li_key"></span>
+					  			<h3><? echo $allofdepartments;?></h3>
+                  			</div>
+					  			<p>总系数</p>
+                  		</div>
+                  		<div class="col-md-2 col-sm-2 box0">
+                  			<div class="box1">
+					  			<span class="li_stack"></span>
+					  			<h3><? echo $allofclass;?></h3>
+                  			</div>
+					  			<p>总课程数</p>
+                  		</div>
+                  	</div><!-- /row mt -->	
+                      
+                     <!-- <div class="row mt">
+                      	<div class="col-md-4 col-sm-4 mb">
+                      		<div class="white-panel pn donut-chart">
+                      			<div class="white-header">
+						  			<h5>电商专业16级课表</h5>
+                      			</div>
+                                <div class="row">
+									<div class="col-sm-6 col-xs-6 goleft">
+										<p><i class="fa fa-calendar"></i></p>
+									</div>
+									<div class="col-sm-6 col-xs-6"></div>
+	                      		</div>
+                                <div class="centered">
+										<img src="public/img/kebiao-1.jpg"  class="col-sm-12 col-xs-12 goleft" height="130">
+	                      		</div>
+	                      	</div>
+                      	</div>
+
+                    </div>--><!-- /row -->
+                    <div class="row mt">
+                      	<div class="col-md-12 col-sm-12 mb">
+                      		<div class="white-panel pn donut-chart">
+                      			<div class="white-header">
+						  			<h5>各系考核通过率</h5>
+                      			</div>
+                            
+                                <div class=" row centered">
+                               		<table class="table table-bordered table-striped table-hover tablelist col-sm-12 col-xs-12 goleft">
+										<tr><th>专业名</th><th>专业人数</th><th>专业学分</th><th>专业通过率</th></tr>
+                                        <? for($i=0;$i<count($ma_List);$i++){ ?>
+										<tr>
+                     						<td><? echo $ma_List[$i]['majorsName']?></td> 
+                                            <td><? echo $A_O_S_F_M[$i]?></td> 
+                                            <td><? echo $ma_List[$i]['majorCredit']?></td> 
+                                            <td><? echo $score[$i]?>%</td>
+           								</tr>
+                    					<? } ?>
+									</table>
+	                      		</div>
+	                      	</div>
+                      	</div>
+						<!-- /col-md-4-->
+
+                    </div><!-- /row -->
+					
+					<div class="row mt">
+                     <!-- <div class="border-head">
+                          <h3>系人数</h3>
+                      </div>
+                      <div class="custom-bar-chart">
+                          <ul class="y-axis">
+                              <li><span><? echo max($rows_de)?></span></li>
+                              <li><span><? echo max($rows_de)*0.8?></span></li>
+                              <li><span><? echo max($rows_de)*0.6?></span></li>
+                              <li><span><? echo max($rows_de)*0.4?></span></li>
+                              <li><span><? echo max($rows_de)*0.2?></span></li>
+                              <li><span>0</span></li>
+                          </ul>
+                          <? 
+                          $i=0;
+                          foreach($data_de as $v_de){
+                          	  $num=ceil(($rows_de[$i]/$all_rows)*100);
+                              $mum=ceil(($rows_de[$i]/max($rows_de))*100);
+                              $num_f=strstr($num,0,1);
+                              $num_s=strstr($num,1,1);
+                           ?>
+                          <div class="bar">
+                              <div class="title"><? echo $v_de['dmt_name']?></div>
+                              <div class="value tooltips" data-original-title="<? echo $num;?>%" data-toggle="tooltip" data-placement="top"><? echo $mum;?>%</div>
+                          </div>
+                          <? 
+                          $i++;
+                          } ?>
+                      </div>-->
+					</div><!-- /row -->	
+					
+                  </div>
+                  
+                  <div class="col-lg-3 ds">
+						<h3>系统公告</h3>
+                                        
+                      <!-- First Action -->
+                      <div class="desc">
+                      	<div class="thumb">
+                      		<span class="badge bg-theme"><i class="fa fa-clock-o"></i></span>
+                      	</div>
+                      	<div class="details">
+                      		<p><muted>2017-11-1</muted><br/>
+                      		   <a href="#">教务处：</a> 2016级基础班课程替代方案<br/>
+                      		</p>
+                      	</div>
+                      </div>
+                      <!-- Second Action -->
+                      <div class="desc">
+                      	<div class="thumb">
+                      		<span class="badge bg-theme"><i class="fa fa-clock-o"></i></span>
+                      	</div>
+                      	<div class="details">
+                      		<p><muted>2017-11-1</muted><br/>
+                      		   <a href="#">教务处：</a> 2016级基础班课程替代方案<br/>
+                      		</p>
+                      	</div>
+                      </div>
+                      <!-- Third Action -->
+                      <div class="desc">
+                      	<div class="thumb">
+                      		<span class="badge bg-theme"><i class="fa fa-clock-o"></i></span>
+                      	</div>
+                      	<div class="details">
+                      		<p><muted>2017-11-1</muted><br/>
+                      		   <a href="#">教务处：</a> 2016级基础班课程替代方案<br/>
+                      		</p>
+                      	</div>
+                      </div>
+                      <!-- Fourth Action -->
+                      <div class="desc">
+                      	<div class="thumb">
+                      		<span class="badge bg-theme"><i class="fa fa-clock-o"></i></span>
+                      	</div>
+                      	<div class="details">
+                      		<p><muted>2017-11-1</muted><br/>
+                      		   <a href="#">教务处：</a> 2016级基础班课程替代方案<br/>
+                      		</p>
+                      	</div>
+                      </div>
+                      <!-- Fifth Action -->
+                      <div class="desc">
+                      	<div class="thumb">
+                      		<span class="badge bg-theme"><i class="fa fa-clock-o"></i></span>
+                      	</div>
+                      	<div class="details">
+                      		<p><muted>2017-11-1</muted><br/>
+                      		   <a href="#">教务处：</a> 2016级基础班课程替代方案<br/>
+                      		</p>
+                      	</div>
+                      </div>
+
+                       <!-- USERS ONLINE SECTION -->
+
+                        <!-- CALENDAR-->
+                        <div id="calendar" class="mb">
+                            <div class="panel green-panel no-margin">
+                                <div class="panel-body">
+                                    <div id="date-popover" class="popover top" style="cursor: pointer; disadding: block; margin-left: 33%; margin-top: -50px; width: 175px;">
+                                        <div class="arrow"></div>
+                                        <h3 class="popover-title" style="disadding: none;"></h3>
+                                        <div id="date-popover-content" class="popover-content"></div>
+                                    </div>
+                                    <div id="my-calendar"></div>
+                                </div>
+                            </div>
+                        </div><!-- / calendar -->
+                      
+                  </div><!-- /col-lg-3 -->
+              </div><!--row -->
+          </section>
+      </section>
+      <!--main content end-->
+        <!--footer start-->
+      <!--<footer class="site-footer">
+          <div class="text-center">
+              Copyright &copy; 2017.Company name All rights reserved.选课系统后台管理
+              <a href="index.php#" class="go-top">
+                  <i class="fa fa-angle-up"></i>
+              </a>
+          </div>
+      </footer>-->
+      <!--footer end-->
+  </section>
+
+<script src="public/js/jquery.js"></script>
+   <!-- <script src="../../public/js/jquery-1.11.1.min.js"></script>-->
+    <script src="public/js/bootstrap.min.js"></script>
+    <script src="public/js/jquery.dcjqaccordion.2.7.js"></script>
+    <script src="public/js/jquery.scrollTo.min.js"></script>
+    <script src="public/js/jquery.nicescroll.js"></script>
+     <script src="public/js/common-scripts.js"></script>
+    <script src="public/js/zabuto_calendar.js"></script>
+    	<script type="application/javascript">
+        $(document).ready(function () {
+            $("#date-popover").popover({html: true, trigger: "manual"});
+            $("#date-popover").hide();
+            $("#date-popover").click(function (e) {
+                $(this).hide();
+            });
+        
+            $("#my-calendar").zabuto_calendar({
+                action: function () {
+                    return myDateFunction(this.id, false);
+                },
+                action_nav: function () {
+                    return myNavFunction(this.id);
+                },
+                ajax: {
+                    url: "show_data.php?action=1",
+                    modal: true
+                },
+                legend: [
+                    {type: "text", label: "Special event", badge: "00"},
+                    {type: "block", label: "Regular event", }
+                ]
+            });
+        });
+        
+        
+        function myNavFunction(id) {
+            $("#date-popover").hide();
+            var nav = $("#" + id).data("navigation");
+            var to = $("#" + id).data("to");
+            console.log('nav ' + nav + ' to: ' + to.month + '/' + to.year);
+        }
+    </script>
+
+  </body>
+</html>

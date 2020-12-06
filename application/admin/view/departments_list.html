@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="keyword" content="">
+
+<title>系表</title>
+	<link rel="stylesheet" type="text/css" href="public/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="public/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="public/css/base.css"/>
+    <link rel="stylesheet" type="text/css" href="public/css/admin.css"/>
+    <link rel="stylesheet" type="text/css" href="public/css/com.css">
+    
+    <script src="public/js/jquery.js"></script>
+    <!--<script src="public/js/jquery-1.11.1.min.js"></script>-->
+    <script src="public/js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+		  $(".click").click(function(){
+		  	$(".tip").fadeIn(200);
+		  });
+
+		  $(".sure").click(function(){
+			  $(".tip").fadeOut(100);
+			});
+
+		  $(".cancel").click(function(){
+			  $(".tip").fadeOut(100);
+			});
+		  $(".tiptop a").click(function(){
+			  $(".tip").fadeOut(100);
+		   });
+			$("#checkAll").click(function(){
+		
+				if(this.checked){
+					$(".checkbox_Id").prop("checked",true);
+				}else{
+					$(".checkbox_Id").prop("checked",false);
+				}
+
+			});	
+			$(".sure").click(function(){
+				var params=$("#deleteRows_form").serialize();
+				$.ajax({
+					type:"POST",
+					url:"index.php?a=deleteRows&c=departments",
+					data: params,
+					success: function(d){
+						var s=d.substr(d,(d.length-1));
+						$("#wrapper").html(d);
+					}
+				})
+			})
+		}); 
+	</script>
+</head>
+
+<body>
+<div class="place">
+    <span>位置：</span>
+    <ul class="placeul">
+    <li><a href="index.php">首页</a></li>
+    <li>></li>
+    <li><a href="#">专业管理</a></li>
+    </ul>
+</div>
+
+<div class="formbody">
+    <div id="usual1" class="usual"> 
+    
+        <div class="itab">
+        	<ul> 
+        		<li><a href="javascript:;" onclick="showAtRight('index.php?a=add&c=departments')">添加系</a></li> 
+        		<li><a href="javascript:;" class="selected">系管理</a></li> 
+       	    </ul>
+        </div> 
+    
+       <div id="tab2" class="tabson">
+       
+        <form method="post" id="deleteRows_form">
+        <div class="table-responsive">
+				<table class="table table-bordered table-striped table-hover tablelist">
+					<tr> 
+						<th><input name="" type="checkbox" value="" id="checkAll" checked="checked"/></th>
+						<th>系名</th>
+						<th>系领导</th>
+						<th>电话</th>
+						<th>地址</th>
+						<th class="listyin">新增时间</th>
+						<th class="listyin">添加者</th>
+						<th>操作</th>
+					</tr>
+					<? 
+						foreach($data as $v){
+					?>
+					<tr>
+                     <td><input name="dmt_Number[]" type="checkbox" value="<? echo $v['dmt_Number'];?>"  class="checkbox_Id"/></td>
+                     <td><? echo $v['dmt_name'];?></td>
+                     <td><? echo $v['dmt_director'];?></td>
+                     <td><? echo $v['dmt_directorPhonenumber'];?></td>
+                     <td><? echo $v['dmt_directorAddress'];?></td>
+                     <td class="listyin"><? echo $v['dmt_addtime'];?></td>
+                     <td class="listyin"><? echo $v['dmt_addadmin'];?></td>
+                     <td>
+                     <a href="javascript:;" onclick="showAtRight('index.php?a=update&c=departments&p=<? echo $v['dmt_Number'];?>')" class="tablelink"> 查看/修改</a>
+                     <a href="javascript:;" onclick="showAtRight('index.php?a=delete&c=departments&p=<? echo $v['dmt_Number'];?>')" class="tablelink">删除</a></td>
+           			</tr>
+           			<? } ?>
+           			<tr>
+            		<td colspan="8"><a href="javascript:;" class="tablelink click">删除全部</a></td>
+            		</tr> 
+				</table>
+			</div>
+            <!--<ul class="pagination">
+			</ul>-->
+        <div class="tip">
+            <div class="tiptop"><span>提示信息</span><a></a></div>
+            
+          <div class="tipinfo">
+            <span><img src="public/img/ticon.png" /></span>
+            <div class="tipright">
+            <p>是否确认对信息的删除？</p>
+            <cite>如果是请点击确定按钮 ，否则请点取消。</cite>
+            </div>
+            </div>
+            
+            <div class="tipbtn">
+            <input name="" type="button"  class="sure" value="确定" />&nbsp;
+            <input name="" type="button"  class="cancel" value="取消" />
+            </div>
+        
+        </div> 
+        </form>
+        
+        </div>
+       
+	</div> 
+ 
+	<script type="text/javascript"> 
+      $("#usual1 ul").idTabs(); 
+    </script>
+    
+    <script type="text/javascript">
+	$('.tablelist tbody tr:odd').addClass('odd');
+	</script>
+</div>
+</body>
+</html>

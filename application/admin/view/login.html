@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>登录</title>
+    <link rel="stylesheet" type="text/css" href="public/css/base.css">
+    <link rel="stylesheet" type="text/css" href="public/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="public/css/login.css">
+    <link rel="stylesheet" type="text/css" href="public/css/com.css">
+    <link rel="stylesheet" type="text/css" href="public/css/font-awesome.css">
+    
+    <script src="public/js/jquery-1.11.1.min.js"></script>
+    <script src="public/js/bootstrap.min.js"></script>
+    <script src="public/js/login.js"></script>
+    <!--<script type="text/javascript">
+		$(document).ready(function(){
+			$("#myTab li").each(function(i){
+				$(this).click(function(){
+					//$("#myTabContent div:eq("+i+")").fadeIn(500).siblings().fadeOut(500);
+				})
+			})
+		})
+	</script>-->
+</head>
+<body>
+<div class="login col-xs-6 col-sm-4 container"><!--col-md-offset-7 container   ​-->
+  <h1><img src="public/img/logo.png">选课系统</h1>
+	<ul id="myTab" class="nav nav-tabs">
+		<li class="active"><a href="#admin" data-toggle="tab">管理员</a> </li>
+		<li><a href="#teacher" data-toggle="tab">教师</a></li>
+		<li><a href="#student" data-toggle="tab">学生</a></li>
+	</ul>
+	<div id="myTabContent" class="tab-content">
+		<div class="tab-pane fade in active" id="admin">
+			<form class="form-horizontal" role="form" action="index.php?a=login&c=login" method="post">
+				<div class="form-group">
+					<label for="name_admin" class="col-sm-3 control-label">管理名:</label>
+					<div class="col-sm-9">
+						<input type="text" name="name" class="form-control" id="name_admin" placeholder="请输入您的管理员账户" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="pwd_admin" class="col-sm-3 control-label">密码:</label>
+					<div class="col-sm-9">
+						<input type="password" name="pwd" class="form-control" id="pwd_admin" placeholder="请输入您的密码" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label" for="admin_code">验证码:</label>
+					<div class="col-sm-9">
+						 <span><input name="code" type="text" id="admin_code" placeholder="请输入验证码" class="form-control ma" onclick="JavaScript:this.value=''"/></span>
+						 <p class="tu"><img src="framework/identifCode.php" onclick="this.src='framework/identifCode.php?'+Math.random();" /></p>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-4 col-sm-10">
+						<input type="hidden" name="user" value="admin" />
+						<button type="submit" class="btn btn-default">登录</button>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="tab-pane fade" id="teacher">
+			<form class="form-horizontal" role="form" action="index.php?a=login&c=login" method="post">
+				<div class="form-group">
+					<label for="name_teacher" class="col-sm-3 control-label">教师名:</label>
+					<div class="col-sm-9">
+						<input type="text" name="name" class="form-control" id="name_teacher"  placeholder="请输入您的教师编号" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="pwd_teacher" class="col-sm-3 control-label">密码:</label>
+					<div class="col-sm-9">
+						<input type="password" name="pwd" class="form-control" id="pwd_teacher" placeholder="请输入您的密码" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label" for="code_teacher">验证码:</label>
+					<div class="col-sm-9">
+						 <span>
+							<input id="code_teacher" name="code" type="text" placeholder="请输入验证码" class="form-control ma" onclick="JavaScript:this.value=''"/>
+						</span>
+						 <p class="tu"><img src="framework/identifCode.php" onclick="this.src='framework/identifCode.php?'+Math.random();" /></p>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-4 col-sm-10">
+						<input type="hidden" name="user" value="teacher" />
+						<button type="submit" class="btn btn-default">登录</button>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="tab-pane fade" id="student">
+			<form class="form-horizontal" role="form" action="index.php?a=login&c=login" method="post">
+				<div class="form-group">
+					<label for="name_student" class="col-sm-3 control-label">学生名:</label>
+					<div class="col-sm-9">
+						<input type="text" name="name" class="form-control" id="name_student" placeholder="请输入您的学号" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="pwd_student" class="col-sm-3 control-label">密码:</label>
+					<div class="col-sm-9">
+						<input type="password" name="pwd" class="form-control" id="pwd_student" placeholder="请输入您的密码" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label" for="code_student">验证码:</label>
+					<div class="col-sm-9">
+						 <span>
+							<input name="code" type="text" id="code_student" placeholder="请输入验证码" class="form-control ma" onclick="JavaScript:this.value=''"/>
+						 </span>
+						 <p class="tu">
+							<img src="framework/identifCode.php" onclick="this.src='framework/identifCode.php?'+Math.random();" />
+						 </p>
+					</div>
+				</div>
+                <div class="form-group">
+					<p class="public"><a><i class="fa fa-wechat"></i>扫码关注</a></p>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-4 col-sm-10">
+						<input type="hidden" name="user" value="student" />
+						<button type="submit" class="btn btn-default">登录</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<div class="clearfix"></div>
+<div class="meng"></div>
+<div class="feedback clearfix">
+	<h2>关注我，随时随地查学分、成绩</h2>
+    <img src="public/img/close3.png" class="guan"/>
+	<p><img src="public/img/public.png" /></p>
+</div>
+<!--<footer class="site-footer text-center wei">
+         Copyright &copy; 2017.Company name All rights reserved.选课系统后台管理
+</footer>-->
+</body>
+</html>

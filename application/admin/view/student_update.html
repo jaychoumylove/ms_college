@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="keyword" content="">
+
+<title>修改学生</title>
+	<link rel="stylesheet" type="text/css" href="public/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="public/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="public/css/base.css"/>
+    <link rel="stylesheet" type="text/css" href="public/css/admin.css"/>
+    <link rel="stylesheet" type="text/css" href="public/css/com.css">
+    
+    
+    <script src="public/js/jquery.js"></script>
+    <!--<script src="public/js/jquery-1.11.1.min.js"></script>-->
+    <script src="public/js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+		<? if($data['stu_number']!=$_SESSION['name']){ ?>
+			$("#dmt_Number").change(function(){
+			$.ajax({
+				type:"get",
+				url:"index.php?a=ajaxDM&c=majors",
+				data:"majorsDepartment="+$("#dmt_Number").val(),
+				success: function(d){
+					//var s=d.substr(d,(d.length-1));
+					$("#major_Number").html(d);
+				}
+			})
+		})
+		<?	} ?>
+		$(".dui").hide();
+		$(".cuo").hide();
+		$("#sub").click(function(){
+			var params=$("#update_form").serialize();
+			$.ajax({
+				type : "POST" ,
+				url : "index.php?a=update&c=student&act=action",
+				data : params,
+				success : function(result){
+					//var s=result.substr(result,(result.length-1));
+					if(d){
+						$(".cuo").hide();
+						$(".dui").show(720);
+					}else{
+						$(".dui").hide();
+						$(".cuo").show(720);
+						
+					}
+				}
+			})
+		})
+	</script>
+</head>
+
+<body>
+<div class="place">
+    <span>位置：</span>
+    <ul class="placeul">
+    <li><a href="index.php">首页</a></li>
+    <li>></li>
+    <? if($data['stu_number']!=$_SESSION['name']){ ?>
+    <li><a href="#">修改学生</a></li>
+    <? }else{?>
+    <li><a href="#">学生信息</a></li>
+    <? }?>
+    </ul>
+</div>
+<div class="formbody">
+    <div id="usual1" class="usual"> 
+    	
+        <div class="itab">
+        	<ul> 
+            	<? if($data['stu_number']!=$_SESSION['name']){ ?>
+        		<li><a href="javascript:;" onclick="showAtRight('?a=add&c=student')">添加学生</a></li> 
+        		<li><a href="javascript:;" onclick="showAtRight('?a=search&c=student')">学生管理</a></li> 
+                <? }else{ ?>
+                <li><a href="javascript:;" class="selected">学生信息</a></li>
+                <? } ?>
+       	    </ul>
+        </div> 
+    	
+       <div id="tab1" class="tabson">
+        <form class="form-horizontal" role="form" method="post" id="update_form">
+                  <div class="form-group">
+                    <label for="stu_realname" class="col-sm-2 control-label">学生姓名：</label>
+                	<div class="col-sm-10">
+                  		<input type="text" class="form-control" id="stu_realname" name="stu_realname" value="<? echo $data['stu_realname']?>" placeholder="请输入学生姓名" />
+                	</div>
+              	  </div>
+                 <div class="form-group">
+                  <label class="col-sm-2 control-label">性别：</label>
+                   <div class="col-sm-10 sex">
+                      <? if($data['stu_sex']=='男'){ ?>
+                      <input type="radio" name="stu_sex" value="男" id="man" checked /><label for="man"> 男</label>
+                      <input type="radio" name="stu_sex" value="女" id="woman" /><label for="woman"> 女</label>
+                      <? }else if($data['stu_sex']=='女'){ ?>
+                      <input type="radio" name="stu_sex" value="男" id="man" /><label for="man"> 男</label>
+                      <input type="radio" name="stu_sex" value="女" id="woman" checked /><label for="woman"> 女</label>
+                      <? } ?>
+                    </div>
+                    </div>
+                  <div class="form-group">
+                    <label for="stu_pwd" class="col-sm-2 control-label">密码：</label>
+                    <div class="col-sm-10">
+                      <input type="password" class="form-control" id="stu_pwd" name="stu_pwd" placeholder="请输入密码" />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="rstu_pwd" class="col-sm-2 control-label">重复密码：</label>
+                    <div class="col-sm-10">
+                      <input type="password" class="form-control" id="rstu_pwd" name="rstu_pwd" placeholder="请再次输入密码" />
+                      <input type="hidden" value="<? echo $data['stu_pwd']?>" name="stu_pwd_h"/>
+                    </div>
+              	  </div>
+               <div class="form-group">
+                <label for="dmt_Number" class="col-sm-2 control-label">所属系：</label>
+                <div class="col-sm-10">
+                <? if($data['stu_number']==$_SESSION['name']){ 
+                	echo $data['dmt_name'];
+                	}else{?>
+                  <select class="form-control" id="dmt_Number" name="dmt_Number">
+                      <option value="<? echo $data['dmt_Number']?>"><? echo $data['dmt_name']?></option>
+                      <? foreach($data_dm as $v_dm){ ?>
+                      <option value="<? echo $v_dm['dmt_Number']?>"><? echo $v_dm['dmt_name']?></option>
+                      <? } ?>
+                  </select>
+                  <? } ?>
+                </div>
+              </div>
+               <div class="form-group">
+                <label for="major_Number" class="col-sm-2 control-label">所属专业：</label>
+                <div class="col-sm-10">
+                <? if($data['stu_number']==$_SESSION['name']){ 
+                	echo $data['majorsName']; ?>
+                    <input type="hidden" value="<? echo $data['stu_majors']?>" name="stu_majors" />
+                <?	}else{?>
+                  <select class="form-control" id="major_Number" name="stu_majors">
+                      <option value="<? echo $data['stu_majors']?>"><? echo $data['majorsName']?></option>
+                  </select>
+                <? } ?>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-2 control-label">学分：</label>
+                <div class="col-sm-10">
+                <span><? echo $data['stu_credits']; ?></span>
+                </div>
+              </div>
+               <div class="form-group">
+                <label for="stu_age" class="col-sm-2 control-label">年龄：</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" value="<? echo $data['stu_age']?>" id="stu_age" name="stu_age" />
+                </div>
+              </div>
+               <div class="form-group">
+                <label for="stu_phonenumber" class="col-sm-2 control-label">联系电话：</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" value="<? echo $data['stu_phonenumber']?>" name="stu_phonenumber" />
+                </div>
+              </div>
+               <div class="form-group">
+                <label for="stu_email" class="col-sm-2 control-label">电子邮箱：</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" id="stu_email" value="<? echo $data['stu_email']?>" name="stu_email" />
+                </div>
+              </div>
+               <div class="form-group">
+                  <div class="col-sm-offset-2 col-sm-10">
+                    <input type="hidden" value="<? echo $data['stu_number']?>" name="stu_number" />
+                    <button type="button" id="sub" class="btn btn-default upbtn">修改</button>
+                 </div>
+              </div>
+              <div class="form-group">
+				<div class="col-sm-12 prompt dui"><i class="fa fa-check-circle">学生修改成功！</i></div>
+            	<div class="col-sm-12 prompt cuo"><i class="fa fa-times-circle">学生修改失败！</i></div>
+			</div>
+        </form>
+       </div>
+       
+	</div> 
+ 
+	<script type="text/javascript"> 
+      $("#usual1 ul").idTabs(); 
+    </script>
+    
+    <script type="text/javascript">
+	$('.tablelist tbody tr:odd').addClass('odd');
+	</script>
+</div>
+</body>
+</html>

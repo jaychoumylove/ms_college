@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="keyword" content="">
+
+<title>添加管理员</title>
+	<link rel="stylesheet" type="text/css" href="public/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="public/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="public/css/base.css"/>
+    <link rel="stylesheet" type="text/css" href="public/css/admin.css"/>
+    <link rel="stylesheet" type="text/css" href="public/css/com.css">
+    
+    <script src="public/js/jquery.js"></script>
+    <!--<script src="../../public/js/jquery-1.11.1.min.js"></script>-->
+    <script src="public/js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$(".dui").hide();
+			$(".cuo").hide();
+			$("#sub").click(function chk_all(){
+				result=$("#adminname").blur() && $("#realname").blur() && $("#adminpwd").blur() && $("#radminpwd").blur() && $("#email").blur() && $("#phone").blur();
+				if(result){
+					var params=$("#add_form").serialize();
+					$.ajax({
+						type : "POST" ,
+						url : "index.php?a=add&c=admin&act=action",
+						data : params,
+						success : function(d){
+							var s=d.substr(d,(d.length-1));
+							if(d=="ok"){
+								$(".cuo").hide();
+								$(".dui").show(720);
+								qk();
+							}else{
+								$(".dui").hide();
+								$(".cuo").show(720);
+							}
+						}
+					})
+				}
+				//alert(2);
+				//alert(chk_all);
+				//alert(3);
+				//var result=chk_name() && chk_real() && chk_pwd() && chk_rpwd() && chk_email() && chk_phone();
+				/*if(result){
+					return true;
+				}else{
+					return false;
+				}*/
+				//var result=chk_all();
+				/*if(){
+					//alert(1);
+					var params=$("#add_form").serialize();
+					$.ajax({
+						type : "POST" ,
+						url : "index.php?a=add&c=admin&act=action",
+						data : params,
+						success : function(d){
+							var s=d.substr(d,(d.length-1));
+							if(s=="ok"){
+								$(".dui").show();
+								qk();
+							}else{
+								$(".cuo").show();
+							}
+						}
+					})
+				}else{
+					//alert(0);
+					return false;
+				}*/
+			});
+			function qk(){
+				$("#adminname").val("");
+				$("#adminpwd").val("");
+				$("#radminpwd").val("");
+				$("#realname").val("");
+				$("#email").val("");
+				$("#phone").val("");
+			};
+			$("#adminname").blur(function chk_name(){
+				if($("#adminname").val()==''){
+					$("#adminname").val('');
+					$("#adminname").attr('placeholder','账户名不能为空');
+					return false;
+				}
+				var reg=/^[a-zA-Z]\w{5,9}$/;
+				if(!reg.test($("#adminname").val())){
+					$("#adminname").val('');
+					$("#adminname").attr('placeholder','账户名以字母开头6-10位数');
+					return false;
+				}else{
+					$.ajax({
+						type : "GET" ,
+						url : "index.php?a=chkname&c=admin",
+						data : "adminname="+$("#adminname").val(),
+						success : function(d){
+							var s=d.substr(d,(d.length-1));
+							if(d=="ok"){
+								$("#adminname").val('');
+								$("#adminname").attr('placeholder','该账户名已被注册！');
+								return false;
+							}else{
+								return true;
+							}
+						}
+					})
+				}
+			})
+			$("#realname").blur(function chk_real(){
+				if($("#realname").val()==''){
+					$("#realname").val('');
+					$("#realname").attr('placeholder','真实姓名不能为空');
+					return false;
+				}else{
+					return true;
+				}
+			})
+			$("#adminpwd").blur(function chk_pwd(){
+				if($("#adminpwd").val()==''){
+					$("#adminpwd").val('');
+					$("#adminpwd").attr('placeholder','密码不能为空');
+					return false;
+				}else{
+					return true;
+				}
+			})
+			$("#radminpwd").blur(function chk_rpwd(){
+				if($("#radminpwd").val()!=$("#adminpwd").val()){
+					$("#radminpwd").val('');
+					$("#radminpwd").attr('placeholder','密码不一致！');
+					return false;
+				}else{
+					return true;
+				}
+			})
+			$("#email").blur(function chk_email(){
+				if($("#email").val()==''){
+					$("#email").val('');
+					$("#email").attr('placeholder','邮箱不能为空');
+					return false;
+				}
+				var reg=/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+				if(!reg.test($("#email").val())){
+					$("#email").val('');
+					$("#email").attr('placeholder','邮箱格式不正确！');
+					return false;
+				}else{
+					return true;
+				}
+			})
+			$("#phone").blur(function chk_phone(){
+				if($("#phone").val()==''){
+					$("#phone").val('');
+					$("#phone").attr('placeholder','手机号码不能为空');
+					return false;
+				}
+				var reg=/^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/;
+				if(!reg.test($("#phone").val())){
+					$("#phone").val('');
+					$("#phone").attr('placeholder','手机号码不正确！');
+					return false;
+				}else{
+					return true;
+				}
+			})
+			//function chk_all(){
+				//var result=chk_name() && chk_real() && chk_pwd() && chk_rpwd() && chk_email() && chk_phone();
+				//return result;
+				/*alert('s');alert(1);
+				if(result){
+					//alert(result);
+					alert('t');
+					return true;
+				}else{
+					//alert(result);
+					alert('f');
+					return false;
+				}*/
+				//alert('t');
+				//return chk_name() && chk_real() && chk_pwd() && chk_rpwd() && chk_email() && chk_phone();
+				//alert('f');
+			//}
+		})
+	</script>
+</head>
+
+<body>
+<div class="place">
+    <span>位置：</span>
+    <ul class="placeul">
+    <li><a href="index.php">首页</a></li>
+    <li>></li>
+    <li><a href="#">添加管理员</a></li>
+    </ul>
+</div>
+
+<div class="formbody">
+    <div id="usual1" class="usual"> 
+    
+        <div class="itab">
+        	<ul> 
+        		<li><a href="javascript:;"  class="selected">添加管理员</a></li> 
+        		<li><a href="javascript:;" onclick="showAtRight('?a=search&c=admin')">管理员管理</a></li> 
+       	    </ul>
+        </div> 
+    
+       <div id="tab1" class="tabson">
+        	<form class="form-horizontal" role="form" method="post" id="add_form">
+                  <div class="form-group">
+                    <label for="adminname" class="control-label col-sm-2">账户名：</label>
+                	<div class="col-sm-10">
+                  		<input type="text" class="form-control" id="adminname" name="adminname" placeholder="请输入账户名">
+                	</div>
+              	  </div>
+                  <div class="form-group">
+                    <label for="adminpwd" class="control-label col-sm-2">密码：</label>
+                    <div class="col-sm-10">
+                      <input type="password" class="form-control" id="adminpwd" name="adminpwd" placeholder="请输入密码">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="radminpwd" class="control-label col-sm-2">重复密码：</label>
+                    <div class="col-sm-10">
+                      <input type="password" class="form-control" id="radminpwd" name="radminpwd" placeholder="请再次输入密码">
+                    </div>
+              	  </div>
+                 <div class="form-group">
+                  <label class="control-label col-sm-2">性别：</label>
+                   <div class="col-sm-10 sex">
+                       <input type="radio" name="sex" value="男" id="man" checked /><label for="man"> 男</label>
+                       <input type="radio" name="sex" value="女" id="woman" /><label for="woman"> 女</label>
+                   </div>
+                </div>
+                <div class="form-group">
+                	<label for="realname" class="control-label col-sm-2">真实姓名：</label>
+                	<div class="col-sm-10">
+                  		<input type="text" class="form-control" name="realname" id="realname" placeholder="请输入真实姓名">
+                	</div>
+               </div>
+              <div class="form-group">
+                <label for="email" class="control-label col-sm-2">邮箱地址：</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" name="email" id="email" placeholder="请输入邮箱地址">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="phone" class="control-label col-sm-2">手机号码：</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" name="phone" id="phone" placeholder="请输入手机号码">
+                </div>
+              </div>
+              <div class="form-group">
+                	<div class="col-sm-offset-2 col-sm-10">
+                    <button type="button" id="sub" class="btn btn-default upbtn">添加</button>
+                    <input type="reset" class="btn btn-default upbtn" value="重置">
+                </div>
+              </div>
+              <div class="form-group">
+                 <div class="col-sm-12 prompt dui"><i class="fa fa-check-circle">管理员添加成功！</i></div>
+                 <div class="col-sm-12 prompt cuo"><i class="fa fa-times-circle">管理员添加失败！</i></div>
+            </div>
+        </form>
+       </div>
+       
+	</div> 
+ 
+	<script type="text/javascript"> 
+      $("#usual1 ul").idTabs(); 
+    </script>
+    
+    <script type="text/javascript">
+	$('.tablelist tbody tr:odd').addClass('odd');
+	</script>
+</div>
+
+</body>
+</html>

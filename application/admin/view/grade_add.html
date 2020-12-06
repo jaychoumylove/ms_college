@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="keyword" content="">
+
+<title>添加成绩</title>
+	<link rel="stylesheet" type="text/css" href="public/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="public/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="public/css/base.css"/>
+    <link rel="stylesheet" type="text/css" href="public/css/admin.css"/>
+    <link rel="stylesheet" type="text/css" href="public/css/com.css">
+    
+    <script src="public/js/jquery.js"></script>
+    <!--<script src="public/js/jquery-1.11.1.min.js"></script>-->
+    <script src="public/js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$("#majorsDepartment").change(function(){
+				$.ajax({
+					type:"get",
+					url:"index.php?a=ajaxDM&c=majors",
+					data:"majorsDepartment="+$("#majorsDepartment").val(),
+					success: function(d){
+						var s=d.substr(d,(d.length-1));
+						$("#stu_majors").html(d);
+					}
+				})
+				$.ajax({
+					type:"get",
+					url:"index.php?a=ajaxGetDm&c=class",
+					data:"majorsDepartment="+$("#majorsDepartment").val(),
+					success: function(d){
+						var s=d.substr(d,(d.length-1));
+						$("#class_num").html(d);
+					}
+				})
+			})
+			$("#stu_majors").change(function(){
+				$.ajax({
+					type:"get",
+					url:"index.php?a=ajaxMaGetSt&c=student",
+					data:"stu_majors="+$("#stu_majors").val(),
+					success: function(d){
+						var s=d.substr(d,(d.length-1));
+						$("#stu_num").html(d);
+					}
+				})
+			})
+			$(".dui").hide();
+			$(".cuo").hide();
+			$("#sub").click(function(){
+				var params=$("#add_form").serialize();
+				$.ajax({
+					type : "POST" ,
+					url : "index.php?a=add&c=grade&act=action",
+					data : params,
+					success : function(d){
+						var s=d.substr(d,(d.length-1));
+						if(d){
+							$(".dui").show(720);
+							qk();
+						}else{
+							$(".cuo").show(720);
+						}
+						/*alert(s+d);*/
+					}
+				})
+			})
+			function qk(){
+				var De="<option value=''>请选择</option><? foreach($data_dm as $v_dm){ ?><option value='<? echo $v_dm['dmt_Number'];?>'><? echo $v_dm['dmt_name'];?></option><? } ?>";
+				$("#majorsDepartment").html(De);
+				$("#stu_majors").html('<option value="">请选择</option>');
+				$("#class_num").html('<option value="">请选择</option>');
+				$("#stu_num").html('<option value="">请选择</option>');
+				$("#grade").val(' ');
+			}
+		})
+	</script>
+</head>
+
+<body>
+<div class="place">
+    <span>位置：</span>
+    <ul class="placeul">
+    <li><a href="index.php">首页</a></li>
+    <li>></li>
+    <li><a href="#">添加成绩</a></li>
+    </ul>
+</div>
+
+<div class="formbody">
+    <div id="usual1" class="usual"> 
+    
+        <div class="itab">
+        	<ul> 
+        		<li><a href="javascript:;" class="selected">添加成绩</a></li> 
+        		<li><a href="javascript:;" onclick="showAtRight('index.php?a=search&c=grade')">成绩管理</a></li> 
+       	    </ul>
+        </div> 
+    
+       <div id="tab1" class="tabson">
+           <form class="form-horizontal" role="form" method="post" id="add_form">
+          	   <div class="form-group">
+					<label for="majorsDepartment" class="col-sm-2 control-label">系：</label>
+					<div class="col-sm-10">
+					  <select class="form-control" id="majorsDepartment" name="majorsDepartment">
+						<option value="">请选择</option>
+						<? foreach($data_dm as $v_dm){ ?>
+						<option value="<? echo $v_dm['dmt_Number'];?>"><? echo $v_dm['dmt_name'];?></option>
+						<? } ?>
+					  </select>
+					</div>
+			   </div>
+			   <div class="form-group">
+					<label for="stu_majors" class="col-sm-2 control-label">专业：</label>
+					<div class="col-sm-10">
+					  <select class="form-control" id="stu_majors" name="stu_majors">
+						<option value="">请选择</option>
+					  </select>
+					</div>
+			   </div>
+          	   <div class="form-group">
+					<label for="class_num" class="col-sm-2 control-label">课程：</label>
+					<div class="col-sm-10">
+					  <select class="form-control" id="class_num" name="class_num">
+						<option value="">请选择</option>
+					  </select>
+					</div>
+			   </div>
+			   <div class="form-group">
+					<label for="stu_num" class="control-label col-sm-2">学生:</label>
+					<div class="vasel col-sm-10">
+						<select class="form-control" id="stu_num" name="stu_num">
+							<option value="">请选择</option>
+						</select>
+					</div>
+			   </div>
+			   <div class="form-group">
+					<label for="grade" class="control-label col-sm-2">分数:</label>
+					<div class="vasel col-sm-10">
+						<input type="text" class="form-control" id="grade" name="grade" placeholder="请输入分数，满分100分" />
+					</div>
+			   </div>
+               <div class="form-group">
+                  <div class="col-sm-offset-2 col-sm-10">
+                    <button type="button" id="sub" class="btn btn-default upbtn">添加</button>
+                    <input type="reset" class="btn btn-default upbtn" value="重置">
+                  </div>
+              </div>
+              <div class="form-group">
+				<div class="col-sm-12 prompt dui"><i class="fa fa-check-circle">添加成绩成功！</i></div>
+            	<div class="col-sm-12 prompt cuo"><i class="fa fa-times-circle">添加成绩失败！</i></div>
+			</div>
+          </form>
+       </div>
+       
+	</div> 
+ 
+	<script type="text/javascript"> 
+      $("#usual1 ul").idTabs(); 
+    </script>
+    
+    <script type="text/javascript">
+	$('.tablelist tbody tr:odd').addClass('odd');
+	</script>
+</div>
+
+
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="keyword" content="">
+
+<title>课程表</title>
+	<link rel="stylesheet" type="text/css" href="public/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="public/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="public/css/base.css"/>
+    <link rel="stylesheet" type="text/css" href="public/css/admin.css"/>
+    <link rel="stylesheet" type="text/css" href="public/css/com.css">
+    
+    <script src="public/js/jquery.js"></script>
+    <!--<script src="public/js/jquery-1.11.1.min.js"></script>-->
+    <script src="public/js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+		  $(".click").click(function(){
+		  	$(".tip").fadeIn(200);
+		  });
+
+		  $(".sure").click(function(){
+			  $(".tip").fadeOut(100);
+			});
+
+		  $(".cancel").click(function(){
+			  $(".tip").fadeOut(100);
+			});
+		  $(".tiptop a").click(function(){
+			  $(".tip").fadeOut(100);
+		   });
+			$("#checkAll").click(function(){
+		
+				if(this.checked){
+					$(".checkbox_Id").prop("checked",true);
+				}else{
+					$(".checkbox_Id").prop("checked",false);
+				}
+
+			});
+			$("#stuadd").click(function(){
+				$.ajax({
+					type:"GET",
+					url:"index.php?a=stuadd&c=grade",
+					data: "class_num="+$("#class_num").val(),
+					success: function(d){
+						var s=d.substr(d,(d.length-1));
+						$("#wrapper").html(d);
+					}
+				})
+			})
+		}); 
+	</script>
+</head>
+
+<body>
+<div class="place">
+    <span>位置：</span>
+    <ul class="placeul">
+    <li><a href="index.php">首页</a></li>
+    <li>></li>
+    <li><a href="#">课程列表</a></li>
+    </ul>
+</div>
+
+<div class="formbody">
+    <div id="usual1" class="usual"> 
+    
+        <div class="itab">
+        	<ul> 
+        		<li><a href="javascript:;" class="selected">课程列表</a></li> 
+       	    </ul>
+        </div> 
+    
+       <div id="tab2" class="tabson">
+       <form method="post">
+        <div class="table-responsive">
+        		
+				<table class="table table-bordered table-striped table-hover tablelist">
+					<tr> 
+					<th class="listyin"><input name="" type="checkbox" value="" id="checkAll" checked="checked"/></th>
+					<th>系</th>
+					<th>课程名</th>
+					<th>上课教室</th>
+					<th>授课教师</th>
+					<th>修满学分</th>
+					<th>开课时间</th>
+					<th>操作</th>
+                   </tr>
+                   <? 
+                   $i=0;
+                   foreach($data as $v){ ?>
+                    <tr>
+                     <td class="listyin"><input name="classNumber[]" type="checkbox"  class="checkbox_Id"/></td>
+                     <td><? echo $v['dmt_name'];?></td>
+                     <td><? echo $v['classCoursesName'];?></td>
+                     <td><? echo $v['crm_nameId'].$v['crm_number'];?></td>
+                     <td><? echo $v['teacherRealname'];?></td>
+                     <td><? echo $v['classCredit'];?></td>
+                     <td><? echo $v['classStartTime'];?></td>
+                    <td>
+                        <? if($chk_c[$i]=='0'){?>
+                        <a href="javascript:;" id="stuadd" class="tablelink">选修</a> 
+                        <input type="hidden" value="<? echo $v['classNumber']?>" id="class_num" />
+                        <? }else{ ?>
+                        <a class="tablelink">已选</a>
+                        <? } 
+                        $i++;
+                        ?>
+                    </td>
+           			</tr>
+                    <? } ?> 
+				</table>
+			</div>
+           <ul class="pagination">
+            <?=$page_cls -> myde_write($word)?>
+			</ul>
+        </form>
+        
+        </div>
+       
+	</div> 
+ 
+	<script type="text/javascript"> 
+      $("#usual1 ul").idTabs(); 
+    </script>
+    
+    <script type="text/javascript">
+	$('.tablelist tbody tr:odd').addClass('odd');
+	</script>
+</div>
+</body>
+</html>

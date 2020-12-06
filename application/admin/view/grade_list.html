@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="keyword" content="">
+
+<title>成绩表</title>
+	<link rel="stylesheet" type="text/css" href="public/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="public/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="public/css/base.css"/>
+    <link rel="stylesheet" type="text/css" href="public/css/admin.css"/>
+    <link rel="stylesheet" type="text/css" href="public/css/com.css">
+    <script src="public/js/jquery.js"></script>
+    <!--<script src="public/js/jquery-1.11.1.min.js"></script>-->
+    <script src="public/js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+		  $(".click").click(function(){
+		  	$(".deleteRows").fadeIn(200);
+		  });
+		$(".forgrade").click(function(){
+		  	$(".grade").fadeIn(200);
+		  });
+		  $(".sure").click(function(){
+			  $(".deleteRows").fadeOut(100);
+			});
+
+		  $(".cancel").click(function(){
+			  $(".deleteRows").fadeOut(100);
+			});
+		  $(".tiptop a").click(function(){
+			  $(".deleteRows").fadeOut(100);
+			  $(".grade").fadeOut(100);
+		   });
+			$("#checkAll").click(function(){
+		
+				if(this.checked){
+					$(".checkbox_Id").prop("checked",true);
+				}else{
+					$(".checkbox_Id").prop("checked",false);
+				}
+
+			});	
+			$("#dmt_Number").change(function(){
+				$.ajax({
+					type:"get",
+					url:"index.php?a=ajaxGetDeMa&c=majors",
+					data:"majorsDepartment="+$("#dmt_Number").val(),
+					success: function(d){
+						var s=d.substr(d,(d.length-1));
+						$("#major_Number").html(d);
+					}
+				})
+				$.ajax({
+					type:"get",
+					url:"index.php?a=ajaxGetDm&c=class",
+					data:"majorsDepartment="+$("#dmt_Number").val(),
+					success: function(d){
+						var s=d.substr(d,(d.length-1));
+						$("#class_num").html(d);
+					}
+				})
+			})
+			$("#sub").click(function(){
+				var params=$("#search_form").serialize();
+				$.ajax({
+					type:"POST",
+					url:"index.php?a=search&c=grade",
+					data: params,
+					success: function(d){
+						var s=d.substr(d,(d.length-1));
+						if(s!="null"){
+							$("#wrapper").html(s);
+						}else{
+							$("t_info").html("查询失败");
+						}
+					}
+				})
+			})
+			$(".sure").click(function(){
+				var params=$("#deleteRows_form").serialize();
+				$.ajax({
+					type:"POST",
+					url:"index.php?a=deleteRows&c=grade",
+					data: params,
+					success: function(d){
+						$("#wrapper").html(d);
+					}
+				})
+			})
+		}); 
+	</script>
+</head>
+
+<body>
+<div class="place">
+    <span>位置：</span>
+    <ul class="placeul">
+    <li><a href="index.php">首页</a></li>
+    <li>></li>
+    <? if(@$_GET['act']=='class'){ ?>
+    <li><a href="#">班级成绩</a></li>
+    <? }else{ ?>
+    <li><a href="#">成绩管理</a></li>
+    <? } ?>
+    </ul>
+</div>
+
+<div class="formbody">
+    <div id="usual1" class="usual"> 
+    
+        <div class="itab">
+        	<ul> 
+            	<? if(@$_GET['act']=='class'){ ?>
+        		<li><a href="javascript:;" class="selected">班级成绩</a></li>
+                <? }else if(@$_GET['act']=='person'){ ?>
+                <li><a href="javascript:;" class="selected">个人成绩</a></li>
+                <? }else{ ?>
+                <li><a href="javascript:;" onclick="showAtRight('?a=add&c=grade')">添加成绩</a></li> 
+        		<li><a href="javascript:;" class="selected">成绩列表</a></li> 
+                <? } ?>
+       	    </ul>
+        </div> 
+    
+       <div id="tab2" class="tabson">
+       <? if(@$_GET['act']!='person' && @$_GET['act']!='class'){ ?>
+        <form class="form-inline" role="form" method="post" id="search_form">
+  			 <div class="form-group">
+                <label for="dmt_Number" class="control-label"> 系: </label>
+                <select class="form-control" id="dmt_Number" name="dmt_Number">
+        			<option value="" selected>全部</option>
+        			<? foreach($data_dm as $v_dm){ ?>
+        			<option value="<? echo $v_dm['dmt_Number']?>"><? echo $v_dm['dmt_name']?></option>
+        			<? }?>
+        		</select>
+  			</div>
+             <div class="form-group">
+                <label for="major_Number" class="control-label col-sm-3"> 专业: </label>
+                <div class="vasel col-sm-9">
+        			<select class="form-control" id="major_Number" name="major_Number">
+        			<option value="" selected>全部</option>
+        			</select>
+        		</div>
+  			</div>
+            <div class="form-group">
+                <label for="class_num" class="control-label col-sm-3"> 课程: </label>
+                <div class="vasel col-sm-9">
+                <? if(@$_GET['act']=='class'){ ?>
+        			<select class="form-control" id="class_num" name="class_num">
+        			<option value="" selected>全部</option>
+                    <? foreach($data_cl as $v_cl){ ?>
+        				<option value="<? echo $v_cl['classNumber']?>"><? echo $v_cl['classCoursesName']?></option>
+        			<? }?>
+        			</select>
+                <? }else{ ?>
+                	<select class="form-control" id="class_num" name="class_num">
+        			<option value="">全部</option>
+        			</select>
+                <? } ?>
+        		</div>
+  			</div>
+  			<div class="form-group">
+                <label for="name" class="control-label col-sm-3"> 学生: </label>
+                <div class="vasel col-sm-9">
+        			<input type="text" class="form-control" id="name" name="name" placeholder="课程(学生)名称、编号"/>
+        		</div>
+  			</div>
+  			
+  			<div class="form-group">
+                <button type="button" id="sub" class="btn btn-default">查询</button>
+            </div>
+		</form>
+        <? } ?>
+        <form method="post" id="deleteRows_form">
+        <div class="table-responsive">
+				<table class="table table-bordered table-striped table-hover tablelist">
+					<tr> 
+                    <? if(@$_GET['act']!='person' && @$_GET['act']!='class'){ ?>
+					<th><input type="checkbox" id="checkAll" checked="checked"/></th>
+                    <? } ?>
+					<th>系</th>
+					<th>专业</th>
+					<th>姓名</th>
+					<th>课程</th>
+					<th>成绩</th>
+                    <? if(@$_GET['act']!='person'){ ?>
+					<th>操作</th>
+                    <? } ?>
+					</tr>
+					 <? foreach($data as $v){ ?>
+                   <tr>
+                   <? if(@$_GET['act']!='person' && @$_GET['act']!='class'){ ?>
+                     <td>
+                     <input name="stu_class[]" type="checkbox" value="<? echo $v['stu_num'];?>/<? echo $v['class_num'];?>" class="checkbox_Id"/>
+                     </td>
+                     <? } ?>
+                     <td><? echo $v['dmt_name'];?></td>
+                     <td><? echo $v['majorsName'];?></td>
+                     <td><? echo $v['stu_realname'];?></td>
+                     <td><? echo $v['classCoursesName'];?></td>
+                     <td><? echo $v['grade'];?></td>
+                     <? if(@$_GET['act']!='person'){ ?>
+                    <td>
+                    <? if(@$_GET['act']=='class'){ ?>
+                    <a onclick="showAtRight('index.php?a=update&c=grade&stu_num=<? echo $v['stu_num'];?>&class_num=<? echo $v['class_num'];?>&active=class')" class="tablelink">查看/修改</a>  
+                    <? }else{ ?>
+                    <a href="javascript:;" onclick="showAtRight('index.php?a=update&c=grade&stu_num=<? echo $v['stu_num'];?>&class_num=<? echo $v['class_num'];?>')" class="tablelink">查看/修改</a> 
+            		<a href="javascript:;" onclick="showAtRight('index.php?a=delete&c=grade&stu_num=<? echo $v['stu_num'];?>&class_num=<? echo $v['class_num'];?>')" class="tablelink">删除</a>
+                    <? } ?>
+                    <a href="index.php?a=print&c=grade&class_num=<? echo $v['class_num'];?>" class="tablelick">导出</a>
+            		</td>
+                    <? } ?>
+           			</tr>
+                    <? } if(@$_GET['act']!='class' && @$_GET['act']!='person'){ ?>
+                    <tr>
+            		<td colspan="8"><a href="javascript:;" class="tablelink click">删除全部</a>
+            		</tr> 
+                    <? } ?>
+				</table>
+			</div>
+            <ul class="pagination">
+            	<?=$page_cls -> myde_write($word)?>
+            	<? if(@$_GET['act']!='person'){ ?>
+                <li class="forgrade"><a href="javascript:;">成绩导入</a></li>
+            	<? } ?>
+			</ul>
+        <div class="tip deleteRows">
+            <div class="tiptop"><span>提示信息</span><a></a></div>
+            
+          <div class="tipinfo">
+            <span><img src="public/img/ticon.png" /></span>
+            <div class="tipright">
+            <p>是否确认对信息的删除？</p>
+            <cite>如果是请点击确定按钮 ，否则请点取消。</cite>
+            </div>
+            </div>
+            
+            <div class="tipbtn">
+            <input name="" type="button"  class="sure" value="确定" />&nbsp;
+            <input name="" type="button"  class="cancel" value="取消" />
+            </div>
+        
+        </div>
+        </form>
+        <div class="tip grade">
+            <div class="tiptop"><span>导入/导出</span><a></a></div>
+            <form class="tipinfo" action="index.php?a=input&c=grade" method="post" enctype="multipart/form-data">
+             <p class="dobtn">请选择要导入的XLS文件：<input type="file" class="file" name="file">
+             <input type="submit" class="btn" value="导入XLS">
+             </p>
+             </form>
+             <!--<form class="tipinfo" action="index.php?a=print&c=grade" method="post">
+             <p class="laboxs">请选择你要导出的栏目：
+             <input type="checkbox" value="dmt_name" name="indexKey[]" id="dmt_name" /><label for="dmt_name">系</label>
+             <input type="checkbox" value="majorsName" name="indexKey[]" id="majorsName" /><label for="majorsName">专业</label>
+             <input type="checkbox" value="class_num" name="indexKey[]" id="class_num" /><label for="class_num">课程编号(必选)</label><br/>
+             <input type="checkbox" value="classCoursesName" name="indexKey[]" id="classCoursesName" /><label for="classCoursesName">课程名</label>
+             <input type="checkbox" value="stu_num" name="indexKey[]" id="stu_num" /><label for="stu_num">学生编号(必选)</label>
+             <input type="checkbox" value="stu_realname" name="indexKey[]" id="stu_realname" /><label for="stu_realname">学生姓名</label>
+             <input type="checkbox" value="stu_sex" name="indexKey[]" id="stu_sex" /><label for="stu_sex">学生性别</label><br/>
+             <input type="checkbox" value="grade" name="indexKey[]" id="grade" /><label for="grade">成绩(必选)</label>
+             </p>
+             <p class="laboxs">请选择你要导出的课程：
+                <? if(@$_GET['act']=='class'){
+                	$m=0;
+                	foreach($data_cl as $v_cl){
+                 ?>
+                	<input type="checkbox" value="<? echo $v_cl['classNumber']?>" name="class_arr[]" id="dmt_name<? echo $m;?>" /><label for="dmt_name<? echo $m;?>"><? echo $v_cl['classCoursesName']?></label>
+                <?  $m++;
+                	}
+                }else{ 
+               		$m=0;
+                	foreach($data_allcl as $v_allcl){
+                ?>
+                <input type="checkbox" value="<? echo $v_allcl['classNumber']?>" name="class_arr[]" id="majorsName<? echo $m;?>" /><label for="majorsName<? echo $m;?>"><? echo $v_allcl['classCoursesName']?></label>
+                <? $m++;
+                	} 
+                }?>
+             </p>
+             <p><input type="submit" class="btn" value="导出XLS"></p>
+          </form>-->
+        </div>
+        </div>
+       
+	</div> 
+ 
+	<script type="text/javascript"> 
+      $("#usual1 ul").idTabs(); 
+    </script>
+    <script type="text/javascript">
+	$('.tablelist tbody tr:odd').addClass('odd');
+	</script>
+</div>
+</div>
+</body>
+</html>

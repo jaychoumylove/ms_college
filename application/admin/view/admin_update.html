@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="keyword" content="">
+
+<title>修改管理员</title>
+	<link rel="stylesheet" type="text/css" href="public/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="public/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="public/css/base.css"/>
+    <link rel="stylesheet" type="text/css" href="public/css/admin.css"/>
+    <link rel="stylesheet" type="text/css" href="public/css/com.css">
+    
+    <script src="public/js/jquery.js"></script>
+    <!--<script src="public/js/jquery-1.11.1.min.js"></script>-->
+    <script src="public/js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function(e) {
+			$(".dui").hide();
+			$(".cuo").hide();
+            $("#sub").click(function(){
+				result=$("#realname").blur() && $("#radminpwd").blur() && $("#email").blur() && $("#phone").blur();
+				if(result){
+					var params=$("#update_form").serialize();
+					$.ajax({
+						type : "POST" ,
+						url : "index.php?a=update&c=admin&act=action",
+						data : params,
+						success : function(d){
+							var s=d.substr(d,(d.length-1));
+							if(d=='ok'){
+								$(".cuo").hide();
+								$(".dui").show(720);
+							}else{
+								$(".dui").hide();
+								$(".cuo").show(720);
+							}
+						}
+					})
+				}
+			})
+			$("#realname").blur(function chk_real(){
+				if($("#realname").val()==''){
+					$("#realname").val('');
+					$("#realname").attr('placeholder','真实姓名不能为空');
+					return false;
+				}else{
+					return true;
+				}
+			})
+			$("#radminpwd").blur(function chk_rpwd(){
+				if($("#radminpwd").val()!=$("#adminpwd").val()){
+					$("#radminpwd").val('');
+					$("#radminpwd").attr('placeholder','密码不一致！');
+					return false;
+				}else{
+					return true;
+				}
+			})
+			$("#email").blur(function chk_email(){
+				if($("#email").val()==''){
+					$("#email").val('');
+					$("#email").attr('placeholder','邮箱不能为空');
+					return false;
+				}
+				var reg=/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+				if(!reg.test($("#email").val())){
+					$("#email").val('');
+					$("#email").attr('placeholder','邮箱格式不正确！');
+					return false;
+				}else{
+					return true;
+				}
+			})
+			$("#phone").blur(function chk_phone(){
+				if($("#phone").val()==''){
+					$("#phone").val('');
+					$("#phone").attr('placeholder','手机号码不能为空');
+					return false;
+				}
+				var reg=/^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/;
+				if(!reg.test($("#phone").val())){
+					$("#phone").val('');
+					$("#phone").attr('placeholder','手机号码不正确！');
+					return false;
+				}else{
+					return true;
+				}
+			})
+			function chk_all(){
+				return chk_real() && chk_rpwd() && chk_email() && chk_phone();
+			}
+        })
+	</script>
+</head>
+
+<body>
+<div class="place">
+    <span>位置：</span>
+    <ul class="placeul">
+    <li><a href="index.php">首页</a></li>
+    <li>></li>
+    <li><a href="#">修改管理员</a></li>
+    </ul>
+</div>
+<div class="formbody">
+    <div id="usual1" class="usual"> 
+    
+        <div class="itab">
+        	<ul> 
+        		<li><a href="javascript:;" onclick="showAtRight('?a=add&c=admin')">添加管理员</a></li> 
+        		<li><a href="javascript:;" onclick="showAtRight('?a=search&c=admin')">管理员管理</a></li> 
+       	    </ul>
+        </div> 
+    
+       <div id="tab1" class="tabson">
+        <form class="form-horizontal" role="form" method="post" id="update_form">
+                  <div class="form-group">
+                    <label class="col-sm-2 control-label">名字：</label>
+                	<div class="col-sm-10">
+                    	<? echo $data['adminname'];?>
+                	</div>
+              	  </div>
+                  <div class="form-group">
+                    <label for="adminpwd" class="col-sm-2 control-label">密码：</label>
+                    <div class="col-sm-10">
+                      <input type="password" class="form-control" name="adminpwd" id="adminpwd" placeholder="请输入密码">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="radminpwd" class="col-sm-2 control-label">重复密码：</label>
+                    <div class="col-sm-10">
+                      <input type="password" class="form-control" id="radminpwd" name="radminpwd" placeholder="请再次输入密码" />
+                      <input type="hidden" name="adminpwd_h" value="<? echo $data['adminpwd']?>"/>
+                    </div>
+              	  </div>
+                 <div class="form-group">
+                  <label for="sex" class="col-sm-2 control-label">性别</label>
+                  <div class="col-sm-10 sex">
+                      <? if($data['sex']=='男'){ ?>
+                      <input type="radio" name="sex" value="男" id="man" checked /><label for="man"> 男</label>
+                      <input type="radio" name="sex" value="女" id="woman" /><label for="woman"> 女</label>
+                      <? }else if($data['sex']=='女'){ ?>
+                      <input type="radio" name="sex" value="男" id="man" /><label for="man"> 男</label>
+                      <input type="radio" name="sex" value="女" id="woman" checked /><label for="woman"> 女</label>
+                      <? } ?>
+                    </div>
+                    </div>
+                 <div class="form-group">
+					<label for="lastname" class="col-sm-2 control-label">真实姓名：</label>
+					<div class="col-sm-10">
+					  <input type="text" class="form-control" id="realname" name="realname" value="<? echo $data['realname']?>">
+					</div>
+				  </div>
+            	<div class="form-group">
+					<label for="phone" class="col-sm-2 control-label">手机号码：</label>
+					<div class="col-sm-10">
+					  <input type="text" class="form-control" name="phone" id="phone" value="<? echo $data['phone']?>">
+					</div>
+				  </div>
+            	<div class="form-group">
+					<label for="email" class="col-sm-2 control-label">邮箱地址：</label>
+					<div class="col-sm-10">
+					  <input type="text" class="form-control" name="email" id="email" value="<? echo $data['email']?>">
+					</div>
+				</div>
+               <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                   <input type="hidden" name="Id" value="<? echo $data['Id'];?>" />
+                    <button type="button" id="sub" class="btn btn-default upbtn">修改</button>
+                </div>
+             </div>
+             <div class="form-group">
+                 <div class="col-sm-12 prompt dui"><i class="fa fa-check-circle">管理员修改成功！</i></div>
+                 <div class="col-sm-12 prompt cuo"><i class="fa fa-times-circle">管理员修改失败！</i></div>
+            </div>
+        </form>
+       </div>
+       
+	</div> 
+ 
+	<script type="text/javascript"> 
+      $("#usual1 ul").idTabs(); 
+    </script>
+    
+    <script type="text/javascript">
+	$('.tablelist tbody tr:odd').addClass('odd');
+	</script>
+</div>
+</body>
+</html>
